@@ -9,7 +9,11 @@ describe('env-var', function () {
     FLOAT: '12.43',
     INTEGER: '5',
     BOOL: 'false',
-    JSON: '{"name":"value"}'
+    JSON: '{"name":"value"}',
+    JSON_OBJECT: '{"name":"value"}',
+    JSON_ARRAY: '[1,2,3]',
+    COMMA_ARRAY: '1,2,3',
+    DASH_ARRAY: '1-2-3'
   };
 
   var mod;
@@ -257,6 +261,60 @@ describe('env-var', function () {
       delete process.env.STRING;
 
       expect(mod('STRING').asString()).to.be.undefined;
+    });
+  });
+
+  describe('#asJsonArray', function () {
+    it('should return undefined', function () {
+      expect(
+        mod('nope').asJsonArray()
+      ).to.be.undefined;
+    });
+
+    it('should throw an error - value was an object', function () {
+      expect(function () {
+        mod('JSON_OBJECT').asJsonArray()
+      }).to.throw();
+    });
+
+    it('should return a JSON Array', function () {
+      expect(
+        mod('JSON_ARRAY').asJsonArray()
+      ).to.deep.equal([1,2,3]);
+    });
+  });
+
+  describe('#asJsonObject', function () {
+    it('should throw an exception', function () {
+      expect(
+        mod('nope').asJsonObject()
+      ).to.be.undefined;
+    });
+
+    it('should throw an error - value was an array', function () {
+      expect(function () {
+        mod('JSON_ARRAY').asJsonObject()
+      }).to.throw();
+    });
+
+    it('should return a JSON Object', function () {
+      expect(
+        mod('JSON_OBJECT').asJsonObject()
+      ).to.deep.equal({name:'value'});
+    });
+  });
+
+  describe('#asArray', function () {
+    it('should return undefined when not set', function () {
+      expect(mod('.NOPE.').asArray()).to.be.undefined;
+    });
+
+    it('should return an array that was split on commas', function () {
+      expect(mod('COMMA_ARRAY').asArray()).to.deep.equal(['1','2','3']);
+    });
+
+    it('should return an array that was split on dashes', function () {
+      expect(mod('DASH_ARRAY').asArray('-')).to.deep.equal(['1','2','3']);
     });
   });
 

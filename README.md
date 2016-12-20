@@ -1,8 +1,9 @@
 # env-var
 
+[![TypeScript](https://badges.frapsoft.com/typescript/code/typescript.svg?v=101)](https://github.com/ellerbrock/typescript-badges/)
 [![Travis CI](https://travis-ci.org/evanshortiss/env-var.svg?branch=master)](https://travis-ci.org/evanshortiss/env-var)
 
-An elegant solution for loading environment variables in node.js.
+solution for loading and sanatizing environment variables in node.js
 
 ## Install
 
@@ -13,6 +14,7 @@ npm install env-var --save
 ## Example
 In the example below we read the environment variable *PARALLEL_LIMIT*, ensure
 it is set (required), and parse it to an integer.
+
 ```js
 var PARALLEL_LIMIT = env('PARALLEL_LIMIT').required().asPositiveInt();
 ```
@@ -119,8 +121,19 @@ fails. The var must be set to either "true" or "false" (upper or lowercase) to
 succeed.
 
 #### asJson()
-Attempt to parse the variable to a JSON Object. Throws an exception if parsing
-fails.
+Attempt to parse the variable to a JSON Object or Array. Throws an exception if
+parsing fails.
+
+#### asJsonArray()
+The same as _asJson_ but checks that the data is a JSON Array, e.g [1,2].
+
+#### asJsonObject()
+The same as _asJson_ but checks that the data is a JSON Object, e.g {a: 1}.
+
+#### asArray([delimiter])
+Reads an environment variable as a string, then splits it on each occurence of
+the specified _delimiter_. By default a comma is used as the delimiter. For
+example a var set to "1,2,3" would become ['1', '2', '3']. 
 
 
 ## Example
@@ -133,6 +146,8 @@ process.env.STRING = 'test';
 process.env.INTEGER = '12';
 process.env.BOOL = 'false';
 process.env.JSON = '{"key":"value"}';
+process.env.COMMA_ARRAY = '1,2,3';
+process.env.DASH_ARRAY = '1-2-3';
 
 // The entire process.env object
 var allVars = env();
@@ -151,6 +166,12 @@ var boolVar = env('BOOL').required().asBool();
 
 // Returns a JSON Object, undefined if not set, or throws if set to invalid JSON
 var jsonVar = env('JSON').asJson();
+
+// Returns an array if defined, or undefined if not set
+var commaArray = env('COMMA_ARRAY').asArray();
+
+// Returns an array if defined, or undefined if not set
+var commaArray = env('DASH_ARRAY').asArray('-');
 ```
 
 
@@ -204,7 +225,7 @@ describe('concat.js', function () {
   });
 
   describe('#concat', function () {
-    it('should combine our var name and returned value', function () {
+    it('should combine our var name and its returned value', function () {
       expect(mod.concat('HELLO')).to.equal('HELLO WORLD');
     });
   });

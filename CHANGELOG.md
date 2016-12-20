@@ -1,3 +1,11 @@
+## 2.4.0 (15 December 2016)
+* Add `asArray([delimeter])` to read environment variables as an array by splitting
+the varible string on each instance of _delimeter_;
+* Add `asJsonArray()` to read in an environment variable that contains a JSON
+Array. Similar to `asJson()`, but ensures the variable is an Array.
+* Add `asJsonObject()` to read in an environment variable that contains a JSON
+Object. Similar to `asJson()`, but ensures the variable is an Object. 
+
 ## 2.3.0 & 2.3.1 (12 December 2016)
 * Add typings support for TypeScript
 
